@@ -38,8 +38,7 @@ main = do
                              ]
   args <- getArgs
   progName <- getProgName
-  -- void $ app.run $ Just $ progName : args
-  void $ app.run $ Nothing
+  void $ app.run $ Just $ progName : args
 
 activate :: Adw.Application -> IO ()
 activate app = do
@@ -68,10 +67,8 @@ titlebarLeft :: IO Adw.HeaderBar
 titlebarLeft = do
   headerBar <- new Adw.HeaderBar []
 
-  menu <- mainMenu
-
   headerBar.packStart =<< new Gtk.MenuButton [ #iconName := "open-menu-symbolic"
-                                             , #menuModel := menu
+                                             , #menuModel :=> mainMenu
                                              ]
   return headerBar
 
