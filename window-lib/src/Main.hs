@@ -1,3 +1,4 @@
+{-# LANGUAGE DuplicateRecordFields #-}
 {-# LANGUAGE OverloadedLabels #-}
 {-# LANGUAGE OverloadedRecordDot #-}
 {-# LANGUAGE OverloadedStrings #-}
@@ -29,7 +30,11 @@ main = do
       , actions = [ APP_SAY_HELLO >== \_ -> putStrLn "Hello from menu!"
                   , APP_QUIT >== \app -> app.quit
                   ]
-      , sidebar = NavigationPage { title = "Menu"
+      , sidebar = SidebarPage { title = "Menu"
                                  , content = Nothing
                                  }
+      , content = ContentPage { title = "Libraries Code Example"
+                              , subtitle = Just "Test program"
+                              , content = Nothing
+                              }
       }

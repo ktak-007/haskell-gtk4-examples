@@ -1,3 +1,4 @@
+{-# LANGUAGE DuplicateRecordFields #-}
 {-# LANGUAGE ImplicitParams #-}
 {-# LANGUAGE OverloadedLabels #-}
 {-# LANGUAGE OverloadedRecordDot #-}
@@ -5,7 +6,8 @@
 {-# LANGUAGE RecordWildCards #-}
 
 module Window ( ApplicationProperties(..)
-              , NavigationPage(..)
+              , SidebarPage(..)
+              , ContentPage(..)
               , runApplicationWindow
               ) where
 
@@ -28,13 +30,15 @@ import qualified GI.Gio as Gio
 -- gi-gtk
 import qualified GI.Gtk as Gtk
 
-data NavigationPage = NavigationPage { title :: Text, content :: Maybe Gtk.Widget }
+data SidebarPage = SidebarPage { title :: Text, content :: Maybe Gtk.Widget }
+data ContentPage = ContentPage { title :: Text, subtitle :: Maybe Text, content :: Maybe Gtk.Widget }
 
 data ApplicationProperties = ApplicationProperties
   { applicationId :: Text
   , menu :: Menu
   , actions :: Actions
-  , sidebar :: NavigationPage
+  , sidebar :: SidebarPage
+  , content :: ContentPage
   }
 
 runApplicationWindow :: ApplicationProperties -> IO ()
@@ -58,8 +62,8 @@ activate app ApplicationProperties {..} = do
   sidebarPage <- new Adw.NavigationPage [ #child := sidebarView, #title := sidebar.title ]
 
   contentView <- new Adw.ToolbarView []
-  contentView.addTopBar =<< titlebarRight
-  contentPage <- new Adw.NavigationPage [ #child := contentView, #title := "Content" ]
+  contentView.addTopBar =<< titlebarRight content.title content.subtitle
+  contentPage <- new Adw.NavigationPage [ #child := contentView, #title := content.title ]
 
   splitView <- new Adw.NavigationSplitView [ #sidebar := sidebarPage, #content := contentPage ]
 
@@ -81,9 +85,12 @@ titlebarLeft menu = do
                                              ]
   return headerBar
 
-titlebarRight :: IO Adw.HeaderBar
-titlebarRight = do
-  title <- new Adw.WindowTitle [ #title := "Libraries Code Example"
-                               , #subtitle := "Test Program"
-                               ]
-  new Adw.HeaderBar [ #titleWidget := title ]
+titlebarRight :: Text -> Maybe Text -> IO Adw.HeaderBar
+titlebarRight title subtitle = do
+  hb <- new Adw.HeaderBar []
+  when (isJust subtitle) $ do
+    set hb [ #titleWidget :=> new Adw.WindowTitle [ #title := title
+                                                  , #subtitle := fromJust subtitle
+                                                  ]
+           ]
+  return hb
