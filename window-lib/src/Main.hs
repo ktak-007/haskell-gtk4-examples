@@ -7,7 +7,14 @@ module Main where
 
 import           Actions
 import           Menu
+import           Tree
 import           Window
+
+-- haskell-gi-base
+import           Data.GI.Base
+
+-- gi-gtk
+import qualified GI.Gtk as Gtk
 
 main :: IO ()
 main = do
@@ -31,8 +38,8 @@ main = do
                   , APP_QUIT >== \app -> app.quit
                   ]
       , sidebar = SidebarPage { title = "Menu"
-                                 , content = Nothing
-                                 }
+                              , content = Just $ unsafeCastTo Gtk.Widget =<< getTreeView
+                              }
       , content = ContentPage { title = "Libraries Code Example"
                               , subtitle = Just "Test program"
                               , content = Nothing

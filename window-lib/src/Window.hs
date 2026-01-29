@@ -30,7 +30,7 @@ import qualified GI.Gio as Gio
 -- gi-gtk
 import qualified GI.Gtk as Gtk
 
-data SidebarPage = SidebarPage { title :: Text, content :: Maybe Gtk.Widget }
+data SidebarPage = SidebarPage { title :: Text, content :: Maybe (IO Gtk.Widget) }
 data ContentPage = ContentPage { title :: Text, subtitle :: Maybe Text, content :: Maybe Gtk.Widget }
 
 data ApplicationProperties = ApplicationProperties
@@ -51,13 +51,9 @@ runApplicationWindow props@ApplicationProperties {..} = do
 
 activate :: Adw.Application -> ApplicationProperties -> IO ()
 activate app ApplicationProperties {..} = do
-  sidebarView <- new Adw.ToolbarView [
-    -- #content :=> sidebarContent
-      -- #content := sidebar.content
-    ]
-  -- Adw.setToolbarViewContent
+  sidebarView <- new Adw.ToolbarView []
   when (isJust sidebar.content) $
-    set sidebarView [ #content := fromJust sidebar.content ]
+    set sidebarView [ #content :=> fromJust sidebar.content ]
   sidebarView.addTopBar =<< titlebarLeft =<< createMenu menu
   sidebarPage <- new Adw.NavigationPage [ #child := sidebarView, #title := sidebar.title ]
 
@@ -88,7 +84,7 @@ titlebarLeft menu = do
 titlebarRight :: Text -> Maybe Text -> IO Adw.HeaderBar
 titlebarRight title subtitle = do
   hb <- new Adw.HeaderBar []
-  when (isJust subtitle) $ do
+  when (isJust subtitle) $
     set hb [ #titleWidget :=> new Adw.WindowTitle [ #title := title
                                                   , #subtitle := fromJust subtitle
                                                   ]
