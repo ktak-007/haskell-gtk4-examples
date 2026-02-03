@@ -38,7 +38,9 @@ treeData =
   [ TreeNode "Животные"
       [ TreeNode "Млекопитающие"
           [ TreeNode "Кошки" []
-          , TreeNode "Собаки" []
+          , TreeNode "Собаки" [ TreeNode "Шарик" []
+                              , TreeNode "Тузик" []
+                              ]
           ]
       , TreeNode "Птицы" []
       ]
@@ -117,16 +119,18 @@ getTreeView = do
     Gtk.treeExpanderSetIndentForDepth expander True
     Gtk.treeExpanderSetHideExpander   expander False
 
-    contentBox <- Gtk.boxNew Gtk.OrientationHorizontal 20
+    contentBox <- new Gtk.Box [ #orientation := Gtk.OrientationHorizontal
+                              , #spacing := 6
+                              ]
     Gtk.treeExpanderSetChild expander ( Just contentBox )
 
     label <- Gtk.labelNew Nothing
     Gtk.boxAppend contentBox label
 
     #setXalign label 0
-    #setMarginStart label 20
-    #setMarginTop label 4
-    #setMarginBottom label 4
+    #setMarginStart label 4
+    #setMarginTop label 8
+    #setMarginBottom label 8
     #setChild listItem (Just expander)
 
   on factory #bind $ \item -> do
