@@ -1,3 +1,5 @@
-packages: tree-list-model
+packages: grid
+        , simple-window
+        , tree-list-model
         , window-split
         , window-lib
