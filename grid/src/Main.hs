@@ -92,11 +92,11 @@ withDefaults widget = do
 
 newBoldLabel :: Text -> IO Gtk.Label
 newBoldLabel text = do
-  label <- Gtk.labelNew Nothing
+  label <- new Gtk.Label
+    [ #halign := Gtk.AlignCenter
+    , #valign := Gtk.AlignCenter
+    ]
   setLabelBold label text
-  Gtk.set label [ #halign := Gtk.AlignCenter
-                , #valign := Gtk.AlignCenter
-                ]
   return label
 
 setLabelBold :: Gtk.Label -> Text -> IO ()
