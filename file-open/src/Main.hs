@@ -21,12 +21,12 @@ import qualified GI.Gtk as Gtk
 
 activate :: Adw.Application -> IO ()
 activate app = mdo
-  content <- new Gtk.Box [#orientation := Gtk.OrientationVertical]
-  title <- new Adw.WindowTitle [#title := "Test"]
-  titlebar <- new Adw.HeaderBar [#titleWidget := title]
-  content.append titlebar
+  content <- new Gtk.Box [ #orientation := Gtk.OrientationVertical ]
+  title <- new Adw.WindowTitle [ #title := "Test" ]
+  titlebar <- new Adw.HeaderBar [ #titleWidget := title ]
+  #append content titlebar
 
-  fd <- Gtk.fileDialogNew
+  fd <- new Gtk.FileDialog []
 
   button <- new Gtk.Button
     [ #child :=> new Adw.ButtonContent [ #iconName := "document-open-symbolic"
@@ -43,20 +43,20 @@ activate app = mdo
                                            return ()
                                        )
     ]
-  content.append button
+  #append content button
 
   window <- new Adw.ApplicationWindow
-    [ #application := app,
-      #content := content,
-      #defaultWidth := 400
+    [ #application := app
+    , #content := content
+    , #defaultWidth := 400
     ]
   window.present
 
 main :: IO ()
 main = do
   app <- new Adw.Application
-    [ #applicationId := "org.example.Test",
-      On #activate (activate ?self)
+    [ #applicationId := "org.example.Test"
+    , On #activate (activate ?self)
     ]
 
   args <- getArgs
