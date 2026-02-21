@@ -1,4 +1,5 @@
-packages: grid
+packages: file-open
+        , grid
         , simple-window
         , tree-list-model
         , window-split
