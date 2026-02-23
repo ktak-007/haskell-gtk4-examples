@@ -1,4 +1,5 @@
-packages: file-open
+packages: adw-dialog
+        , file-open
         , grid
         , simple-window
         , tree-list-model
