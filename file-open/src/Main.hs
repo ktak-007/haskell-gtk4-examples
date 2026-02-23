@@ -4,11 +4,13 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecursiveDo #-}
 
-import Control.Monad (void)
-import System.Environment (getArgs, getProgName)
+import qualified Control.Exception as E
+import           Control.Monad (void)
+import           System.Environment (getArgs, getProgName)
 
 -- haskell-gi-base
-import Data.GI.Base
+import           Data.GI.Base
+import           Data.GI.Base.Utils (whenJust)
 
 -- gi-adwaita
 import qualified GI.Adw as Adw
@@ -32,16 +34,20 @@ activate app = mdo
     [ #child :=> new Adw.ButtonContent [ #iconName := "document-open-symbolic"
                                        , #label := "Open file"
                                        ]
-    , On #clicked $ Gtk.fileDialogOpen fd
-                                       (Just window)
-                                       (Nothing :: Maybe Gio.Cancellable)
-                                     $ Just
-                                       ( \_ aresult -> do
-                                           choice <- Gtk.fileDialogOpenFinish fd aresult
-                                           -- traverse #getPath choice >>= print
-                                           #getPath choice >>= print
-                                           return ()
-                                       )
+    , On #clicked $ do
+      mbWindow <- Gtk.applicationGetActiveWindow app
+      whenJust mbWindow
+        $ \window' -> Gtk.fileDialogOpen fd
+          (Just window')
+          (Nothing :: Maybe Gio.Cancellable)
+        $ Just (
+          \_ aresult -> do
+             result :: Either GError Gio.File <- E.try (Gtk.fileDialogOpenFinish fd aresult)
+             case result of
+               Left _err -> pure ()
+               Right choice -> #getPath choice >>= print
+             return ()
+        )
     ]
   #append content button
 
