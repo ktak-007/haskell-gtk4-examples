@@ -18,7 +18,7 @@ import Data.Text (Text)
 import qualified GI.Gtk as Gtk
 
 appId :: Text
-appId = "org.example.Test"
+appId = "org.example.grid"
 
 main :: IO ()
 main = do
