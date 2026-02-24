@@ -56,7 +56,7 @@ showAlertDialog parent = do
 
   -- Activated on dialog's finish
   on dialog #response $ \responseId -> do
-    print $ "You selectd " <> responseId
+    print $ "You selected " <> responseId
     buf <- Gtk.entryGetBuffer entry
     text <- Gtk.entryBufferGetText buf
     print $ "You entered: " <> text
@@ -66,6 +66,9 @@ showAlertDialog parent = do
 
   -- Focus to the entry field
   Gtk.widgetGrabFocus entry >> return ()
+
+  -- You can see this output before you see the dialog window
+  putStrLn "showAlertDialog finished"
 
 main :: IO ()
 main = do
